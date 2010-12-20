@@ -29,9 +29,6 @@ main(int argc, char **argv)
 			i++;
 		}
 		file[name_dim]='\0';
-	//	printf("long: %d %s, %s, file name: %s\n",name_dim,argv[1],rle,file);
-
-
 
 		if(fin=fopen(argv[1],"r"))
 		{
@@ -42,11 +39,9 @@ main(int argc, char **argv)
 				int error;
 				fread(&data,sizeof(data),1,fin);
 				while(!feof(fin)){
-					printf(" num: %d\n",data.count);
 					for(i=0;i<data.count;i++){
-						//fwrite(&data.c,sizeof(data.c),1,fout);
-						putc(data.c,fout);
-						//putc(data.c,stdout);
+						fwrite(&data.c,sizeof(data.c),1,fout);
+						//putc(data.c,fout);
 					}
 					fread(&data,sizeof(data),1,fin);
 				}

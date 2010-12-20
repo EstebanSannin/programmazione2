@@ -14,11 +14,13 @@ main(int argc, char **argv)
 			if(fout=fopen(strcat(argv[1],".rle"),"w"))
 			{
 				rleType data;
-				data.c=getc(fin);
-				data.count=1;
 				char c;
+				fread(&c, sizeof(c), 1, fin);
+				data.count=1;
+				data.c=c;
 				int error;
-				while((c=getc(fin))!=EOF)
+				fread(&c, sizeof(c), 1, fin);
+				while(!feof(fin))
 				{
 					if(c!=data.c || data.count==MAXLEN)
 					{
@@ -33,6 +35,7 @@ main(int argc, char **argv)
 					}
 					else
 						data.count++;
+					fread(&c, sizeof(c), 1, fin);
 				}
 				fwrite(&data,sizeof(data),1,fout);
 				fclose(fout);
