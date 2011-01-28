@@ -3,6 +3,7 @@
 #include <string.h>
 
 #define MAX_DESCR 	50
+#define MAX_NODE	50
 #define FALSE 		0
 #define TRUE 		!FALSE
 
@@ -10,6 +11,7 @@
 typedef struct _Record {
 	int from;
 	int to;
+	int peso;
 	char descr[MAX_DESCR+1];
 
 	struct _Record *next;
@@ -22,19 +24,19 @@ void insert_after(Record *r, Record *n){
 	r->next = n;
 }
 
+
+/* Ritorna la struttura relativa all'ultimo nodo*/
 Record *last(){
 	Record *curr;
 	curr = list;
 
-	while(TRUE){
-		if(!curr->next)
-			break;
+	while(curr->next){
 		curr = curr->next;
 	}
-
 	return curr;
 }
 
+/*Aggiunge un nodo in fondo alla lista*/
 int add(const int from, const int to, const char *descr){
 	Record *r;
 	r = malloc(sizeof(Record));
@@ -52,10 +54,14 @@ int add(const int from, const int to, const char *descr){
 		return FALSE;
 }
 
+/*rimuove un nodo relativo*/
+
 int remove_n(const int from){
 	Record *curr;
-	Record *prev = NULL;
-	curr = list;
+	Record *prev;
+
+	prev = list;
+	curr = list->next;
 
 	while(curr){
 		if(curr->from == from){
@@ -72,9 +78,10 @@ int remove_n(const int from){
 	return FALSE;
 }
 
+/*dato il campo from ritorna il primo nodo relativo della lista*/
 Record *get(const int from){
 	Record *curr;
-	curr = list;
+	curr = list->next;
 
 	while(curr){
 		if(curr->from==from)
@@ -84,10 +91,10 @@ Record *get(const int from){
 
 	return curr;
 }
-
+/*Stampa l'intera lista*/
 void print(){
 	Record *curr;
-	curr = list;
+	curr = list->next;
 
 	printf("\n");
 	printf("        From        To        Descrizione\n");
@@ -102,21 +109,17 @@ void print(){
 	printf("\n");
 }
 
-int get_to(const int from){
-	int to;
 
-	return to;
-
-}
-
-int *ampiezza(int from, int *vect){
+/*analizza la lista e ritorna l'ampiezza del grafo e la inserisce nel puntatore vect*/
+void ampiezza(int from, int *vect){
 	Record *curr;
-	curr = list;
-	int j;
-	static int memory[10];
+	curr = list->next;
+	static int memory[MAX_NODE];
 	static int i = 1;
+	
 	memory[from]=1;
 	static int count = 0;
+
 	while(curr){
 		if(curr->from==from){
 			if(memory[curr->to]!=1 ){
@@ -135,17 +138,24 @@ int *ampiezza(int from, int *vect){
 	}
 }
 
+int init(){
+	Record *r;
+	r = malloc(sizeof(Record));
+	if(r != NULL){
+		r->next = NULL;
+		list = r;
+		return 0;
+	}
+	return 1;
+}
+
 
 int main(){
-	Record r1, *r;
+	//Record r1, *r;
 
-	r1.from=1;
-	r1.to=2;
-	strcpy(r1.descr, "Nodo 1 ---> 2");
-	r1.next=NULL;
-	list=&r1;
-
-	add(1, 3, "Nodo 1 ---> 3");
+	init();
+	add(1, 2, "Nodo 1 ---> 2");
+	add(1, 3, "Nodo 1 ---> 3"); // aggiungo i nodi del grafo alla lista
 	add(3, 4, "Nodo 3 ---> 4");
 	add(4, 1, "Nodo 4 ---> 1");
 	add(2, 5, "Nodo 2 ---> 5");
@@ -153,13 +163,14 @@ int main(){
 
 	print();
 
-	int *vect=calloc(10,sizeof(int));
+	int *vect=calloc(MAX_NODE,sizeof(int));
 	int node;
 	
 	printf("Inserire nodo di partenza: ");
 	scanf("%d",&node);
 	
 	vect[0]=node;
+
 	ampiezza(node,vect);
 	
 	int i=0;
